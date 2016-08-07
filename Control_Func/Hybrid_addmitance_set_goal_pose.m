@@ -1,4 +1,4 @@
-function Task_space_interp_set_goal(tg,det_p,det_quat,tf,varargin)
+function Hybrid_addmitance_set_goal_pose(tg,det_p,det_quat,varargin)
 %%  By Long Wang, 2015/7/6
 %   For set convenient, p => Incremental position
 %   quat => absolute orientaion
@@ -13,8 +13,8 @@ if numel(varargin)
         end
     end
 end
-id_go = tg.getparamid('Task Space Trajectory Interpolation/go','Value');
-tg.setparam(id_go,0);
+Hybrid_admittance_config(tg,'go',0);
+Task_space_set_mode(tg,2);
 %%  Set position
 if strcmp(MotionMode,'absolute')
     p_f = det_p;
@@ -25,14 +25,13 @@ elseif strcmp(MotionMode,'relative')
     quat_row = quatmultiply(quat_cur',det_quat');
     quat_f = quat_row';
 end
-id = tg.getparamid('Task Space Trajectory Interpolation/p_ref','Value');
+id = tg.getparamid('Hybrid Position Force Admittance Control/p_ref','Value');
 tg.setparam(id,p_f);
 %%  Set orientation
-id = tg.getparamid('Task Space Trajectory Interpolation/quat_ref','Value');
+id = tg.getparamid('Hybrid Position Force Admittance Control/quat_ref','Value');
 tg.setparam(id,quat_f);
-%%  Set time
-id = tg.getparamid('Task Space Trajectory Interpolation/5th Order Polynomial and Slerp/tf','Value');
-tg.setparam(id,tf);
+id = tg.getparamid('Hybrid Position Force Admittance Control/quat_f','Value');
+tg.setparam(id,quat_f);
 %%  Set Go
-tg.setparam(id_go,1);
+Hybrid_admittance_config(tg,'go',1);
 end

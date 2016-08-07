@@ -1,0 +1,3 @@
+Task_space_set_mode(PSM_CMD,2);
+Hybrid_addmitance_set_goal_pose(PSM_CMD,...
+    [0;0;5],[1;0;0;0],'Motion Mode','relative');
