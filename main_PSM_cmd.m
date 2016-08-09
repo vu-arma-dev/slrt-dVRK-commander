@@ -1,6 +1,7 @@
 %%  Main Func - PSM Commander
 %   By Long Wang, Rashid Yasin
-address = '192.168.1.201';              % Target Address
+address = '192.168.1.201';              % ARMA PC Target Address
+% address = '192.168.0.3'; %CMU Target Address
 port = '22222';                         % Target Port
 Model_path = getenv('PSMCMD');
 ECL_path = getenv('ECLDIR');

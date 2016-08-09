@@ -17,7 +17,7 @@
 *.mexw64
 
 *.asv
-
+Data/*
 Data/tmp/*
 Data/tmpX/*
 Data/Video/*

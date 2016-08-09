@@ -8,7 +8,7 @@ if numel(varargin)
     for i = 1:2:numel(varargin)
         propertyName = varargin{i};
         propertyValue = varargin{i+1};
-        if strcmp(propertyName,'Motion Mode')
+        if strcmp(propertyName,'MotionMode')
             MotionMode = propertyValue;
         end
     end
