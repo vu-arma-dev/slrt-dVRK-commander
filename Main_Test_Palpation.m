@@ -5,7 +5,7 @@ main_PSM_cmd;
 datafolder=[fileparts(getenv('PSMCMD')) '\Data\'];
 
 % Set home and end pose
-homePos=[20;20;30];
+homePos=[87;45;48];
 homeQuat = rot2quat(rotd([1;0;0],-180)*rotd([0;0;1],20));
 finalPos=[80;80;30];
 
