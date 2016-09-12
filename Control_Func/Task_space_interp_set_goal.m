@@ -24,6 +24,15 @@ elseif strcmp(MotionMode,'relative')
     p_f = p_cur + det_p;
     quat_row = quatmultiply(quat_cur',det_quat');
     quat_f = quat_row';
+elseif strcmp(MotionMode,'tool frame')
+    [p_cur,quat_cur] = Task_space_get_pose_cur(tg);
+    R_cur = quat2rot(quat_cur);
+    T_cur = [R_cur,p_cur;...
+        0,0,0,1];
+    p_des_wave = T_cur*[det_p;1];
+    p_f = p_des_wave(1:3);
+    quat_row = quatmultiply(quat_cur',det_quat');
+    quat_f = quat_row';
 end
 id = tg.getparamid('Task Space Trajectory Interpolation/p_ref','Value');
 tg.setparam(id,p_f);
