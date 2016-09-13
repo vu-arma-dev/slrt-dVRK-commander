@@ -16,17 +16,17 @@ end
 path_Model = SETUP_ENV_PATH('PSMCMD');
 %     path_Embedded = [path_Model,'\Embedded_Func'];
 %%  Other dependencies
-path_IREP_Init = [path_Model,'\Init_Func'];
-%     path_IREP_Mat = [path_Model,'\Config_Mat'];
+path_Rob_Init = [path_Model,'\Init_Func'];
+path_Rob_Mat = [path_Model,'\Config_Mat'];
 %     path_IREP_icon = [path_Model,'\icons'];
-path_IREP_simulink = [path_Model,'\m2016'];
+path_Rob_simulink = [path_Model,'\m2016'];
 %%  Adding all the path
 restoredefaultpath;
 addpath(  genpath(path_ECL),...
-    path_IREP_Init,...
-    path_IREP_simulink);
+    path_Rob_Init,...
+    path_Rob_Mat,...
+    path_Rob_simulink);
 %               path_Embedded,...
-%               path_IREP_Mat,...
 %               path_IREP_icon,...
 
 end
