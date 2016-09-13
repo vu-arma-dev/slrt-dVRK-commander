@@ -1,3 +1,9 @@
 Task_space_set_mode(PSM_CMD,1);
 Task_space_interp_set_goal(PSM_CMD,...
-    [0;0;2],rot2quat(eye(3)),3,'MotionMode','relative');
+    [0;0;6],rot2quat(eye(3)),3,'MotionMode','relative');
+
+Task_space_interp_set_goal(PSM_CMD,...
+    [0;0;0],rot2quat(rotd([0;0;1],-10)),3,'MotionMode','relative');
+
+Task_space_interp_set_goal(PSM_CMD,...
+    [0;0;5],rot2quat(eye(3)),3,'MotionMode','relative');
