@@ -1,11 +1,11 @@
-% Main Test of palpation with data
-
-% Start the communication
-main_PSM_cmd;
+%%  Main Test of palpation with data
+%   This experiment is to scan the surface of the enviroment
+%   Start the communication
+PSM_CMD = Initialize_PSM_CMD;
 datafolder=[fileparts(getenv('PSMCMD')) '\Data\'];
 
 % Set home and end pose
-homePos=[87;45;48];
+homePos=[-33;-8; 115];
 homeQuat = rot2quat(rotd([1;0;0],-180)*rotd([0;0;1],20));
 finalPos=[80;80;30];
 
@@ -25,7 +25,7 @@ Task_space_interp_set_goal(PSM_CMD,...
     homePos,homeQuat,4,'MotionMode','absolute');
 fprintf('Experiment at home above organ, hit any key to descend\n');
 pause
-    
+
 
 %% Turn on admittance controller and sinusoid motion
 Task_space_set_mode(PSM_CMD,2);
@@ -38,7 +38,7 @@ Hybrid_admitance_set_goal_pose(PSM_CMD,[0;0;0],[1;0;0;0],...
 fprintf('Experiment at ready, hit any key to continue\n');
 pause
 
-% % % % % % % % % % % % % % % % % % % % % % % % % 
+% % % % % % % % % % % % % % % % % % % % % % % % %
 %% Actually run palpation
 for i=1:length(xvec)
     dataname=[datafolder 'palpationT1_' num2str(i)];
