@@ -1,8 +1,19 @@
-function PSM_CMD = Initialize_PSM_CMD()
+function PSM_CMD = Initialize_PSM_CMD(varargin)
 %%  Intialize Func - PSM Commander
 %   By Long Wang, Rashid Yasin
 %   This func starts the xPC application "PSM commander" to control PSM.
 %   It also unbias the force sensor
+%%  Parsing optional inputs:
+GoHome = 'off';
+if numel(varargin)
+    for i = 1:2:numel(varargin)
+        propertyName = varargin{i};
+        propertyValue = varargin{i+1};
+        if strcmp(propertyName,'GoHome')
+            GoHome = propertyValue;
+        end
+    end
+end
 %%  Folder path
 Model_path = getenv('PSMCMD');
 ECL_path = getenv('ECLDIR');
@@ -41,5 +52,12 @@ while(toc(t0)<6.5)
     reverseStr = repmat(sprintf('\b'), 1, length(msg));
 end
 fprintf(' [ok].\n')
-
+%% Move to the staring pose
+if strcmp(GoHome,'on')
+    Config_mat_home_path = [getenv('PSMCMD'),'/Config_Mat/HomeRob'];
+    load(Config_mat_home_path);
+    Task_space_set_mode(PSM_CMD,1);
+    Task_space_interp_set_goal(PSM_CMD,...
+        HomeRob.p,HomeRob.quat,10,'MotionMode','absolute','CheckCompletion','yes');
+end
 end

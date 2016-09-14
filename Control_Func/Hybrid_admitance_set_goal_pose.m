@@ -36,8 +36,6 @@ tg.setparam(id,p_f);
 %%  Set orientation
 id = tg.getparamid('Hybrid Position Force Admittance Control/quat_ref','Value');
 tg.setparam(id,quat_f);
-id = tg.getparamid('Hybrid Position Force Admittance Control/quat_f','Value');
-tg.setparam(id,quat_f);
 %%  Set Go
 logger=dvrk_logger;
 Hybrid_admittance_config(tg,'go',1);
@@ -45,12 +43,12 @@ if ~strcmp(LogName,'nolog')
     fprintf('\nLogging...\n');
     reverseStr = [];
     while Get_robot_status(tg,'motionGoing')
-%         Get and log position, force, quaternion
+        %         Get and log position, force, quaternion
         t0=tic;
         [pos,quat]=Task_space_get_pose_cur(tg);
         force=Task_space_get_force_cur(tg);
         logger.log_position_force_quat(pos,force,quat);
-% Wait for the next UDP call
+        % Wait for the next UDP call
         while toc(t0)<dtudp
         end
         msg = sprintf('%d poses generated ... ',logger.current_log_idx);

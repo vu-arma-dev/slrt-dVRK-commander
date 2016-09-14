@@ -5,7 +5,9 @@ switch paramName
     case 'go'
         id = tg.getparamid('Hybrid Position Force Admittance Control/go','Value');
     case 'sine_go'
-        id = tg.getparamid('Hybrid Position Force Admittance Control/sine go','Value');
+        id = tg.getparamid(...
+            'Hybrid Position Force Admittance Control/Superimposed Position and Force/sine go',...
+            'Value');
     case 'f_bias'
         id= tg.getparamid('','f_bias');
     case 'K_adm'

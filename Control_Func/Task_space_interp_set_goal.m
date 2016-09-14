@@ -4,12 +4,15 @@ function Task_space_interp_set_goal(tg,det_p,det_quat,tf,varargin)
 %   quat => absolute orientaion
 %%  Parse the input
 MotionMode= 'absolute';
+CheckCompletion = 'no';
 if numel(varargin)
     for i = 1:2:numel(varargin)
         propertyName = varargin{i};
         propertyValue = varargin{i+1};
         if strcmp(propertyName,'MotionMode')
             MotionMode = propertyValue;
+        elseif strcmp(propertyName,'CheckCompletion')
+            CheckCompletion = propertyValue;
         end
     end
 end
@@ -44,4 +47,28 @@ id = tg.getparamid('Task Space Trajectory Interpolation/5th Order Polynomial and
 tg.setparam(id,tf);
 %%  Set Go
 tg.setparam(id_go,1);
+%%  Check completion if selected
+if strcmp(CheckCompletion,'yes')
+    t_timeout = 15;
+    fprintf('\nPSM 5th Poly Interp moving ... \n')
+    t0 = tic;
+    reverseStr = [];
+    t_run = toc(t0);
+    InLoop = 0;
+    while(InLoop==0)
+        while (Get_robot_status(tg,'motion5thPoly'))
+            pause(0.05);
+            msg = sprintf('%.2f seconds ... ',t_run);
+            fprintf([reverseStr, msg]);
+            reverseStr = repmat(sprintf('\b'), 1, length(msg));
+            InLoop = 1;
+        end
+        t_run = toc(t0);
+        if (t_run>t_timeout)&&(t_run>tf)
+            fprintf('\nPSM failed to execute the desired 5th poly trajectory ...\n');
+            pause;
+        end
+    end
+    fprintf(' [ok].\n')
+end
 end

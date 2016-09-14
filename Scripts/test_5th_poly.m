@@ -3,10 +3,16 @@ Task_space_interp_set_goal(PSM_CMD,...
     [10;0;0],rot2quat(eye(3)),2,'MotionMode','relative');
 
 Task_space_interp_set_goal(PSM_CMD,...
-    [0;0;0],rot2quat(rotd([0;0;1],-10)),3,'MotionMode','relative');
+    [0;0;0],rot2quat(rotd([0;0;1],0)),0.2,'MotionMode','relative');
 
 Task_space_interp_set_goal(PSM_CMD,...
-    [0;0;5],rot2quat(eye(3)),3,'MotionMode','relative');
+    [0;0;0],rot2quat(eye(3)),3,'MotionMode','relative');
 
 Task_space_interp_set_goal(PSM_CMD,...
-    [-3;-4;-123],rotm2quat(R_des),3,'MotionMode','absolute');
+    HomeCMURob.p,rotm2quat(HomeCMURob.R),10,'MotionMode','absolute');
+
+Task_space_interp_set_goal(PSM_CMD,...
+    [23.9726;8.0688;-107.8969],axang2quat([0 1 0 pi]),10,'MotionMode','absolute');
+
+Task_space_interp_set_goal(PSM_CMD,...
+    [0;0;0],axang2quat([0 0 1 -15/180*pi])',5,'MotionMode','relative');
