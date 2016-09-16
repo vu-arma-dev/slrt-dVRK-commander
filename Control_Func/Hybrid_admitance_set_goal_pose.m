@@ -30,11 +30,15 @@ elseif strcmp(MotionMode,'relative')
     quat_row = quatmultiply(quat_cur',det_quat');
     quat_f = quat_row';
 end
-id = tg.getparamid('Hybrid Position Force Admittance Control/p_ref','Value');
+id = tg.getparamid(...
+    'Hybrid Position Force Admittance Control/Desired Trajectory/p_ref',...
+    'Value');
 p_f=p_f(:);
 tg.setparam(id,p_f);
 %%  Set orientation
-id = tg.getparamid('Hybrid Position Force Admittance Control/quat_ref','Value');
+id = tg.getparamid(...
+    'Hybrid Position Force Admittance Control/Desired Trajectory/quat_ref',...
+    'Value');
 tg.setparam(id,quat_f);
 %%  Set Go
 logger=dvrk_logger;

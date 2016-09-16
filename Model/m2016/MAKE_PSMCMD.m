@@ -1,5 +1,7 @@
-function MAKE_PSMCMD()
-model_name = 'PSM_Commander';
+function MAKE_PSMCMD(model_name)
+if nargin<1
+    model_name = 'PSM_Commander';
+end
 current_dir = pwd;
 PSMCMD_DEPENDENCY;
 SETUP_BUILD_PATH('PSMCMD');

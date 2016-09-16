@@ -12,6 +12,16 @@ switch paramName
         id= tg.getparamid('','f_bias');
     case 'K_adm'
         id=tg.getparamid('','K_adm');
+    case 'trajectory mode'
+        id = tg.getparamid(...
+            'Hybrid Position Force Admittance Control/Desired Trajectory/mode',...
+            'Value');
+        if strcmp(paramValue,'path')
+            mode_value = 1;
+        else 
+            mode_value = 0;
+        end
+        paramValue = mode_value;
 end
 tg.setparam(id,paramValue);
 end
