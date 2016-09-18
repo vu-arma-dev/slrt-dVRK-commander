@@ -1,7 +1,8 @@
-function PATH = GenDeformedTargetCurvePath()
-%%  Long Wang, 2014/9/18
-%   Generate compatible raster path struct for parkreXYZ, JHU experiment
-%   setup
+function PATH = GenRasterScanPath(MapRefCorners,MapRefHeights,varargin)
+%%  Generate Raster Scan Path
+%   Long Wang, 2016/9/17
+%%  Input
+%   MapRefCorners -
 %%  Properties of struct PATH
 %   PATH.PtsNumber  ->  Total number of points
 %   PATH.POINTS     ->  (3 X N) matrix all point coord
@@ -13,6 +14,21 @@ function PATH = GenDeformedTargetCurvePath()
 %   PATH.DATA       ->  (4 X N) This is Path plan data that parkerXYZ can take in.
 %                        the first row is scaled distance and the other
 %                        three are coordinates
+%%  Parse Optional inputs
+spacingDx = 1; % [mm]
+PathName = 'RasterPath';
+if numel(varargin)
+    for i = 1:2:numel(varargin)
+        propertyName = varargin{i};
+        propertyValue = varargin{i+1};
+        if strcmp(propertyName,'spacing dx')
+            spacingDx = propertyValue;
+        elseif strcmp(propertyName,'path name')
+            PathName = propertyValue;
+        end
+    end
+end
+
 %%  Create a PATH struct format
 PATH.PtsNumber = 1000;
 PATH.POINTS = zeros(3,PATH.PtsNumber);
@@ -20,24 +36,27 @@ PATH.SegLen = zeros(1,PATH.PtsNumber);
 PATH.SCALING = ones(1,PATH.PtsNumber);
 PATH.DATA = zeros(4,PATH.PtsNumber);
 %%  Calculate PATH.POINTS
-[curveX,curveY,curveZ] = CurveFit('DeformedTargetCurve',1000,25,0);
-
-ControlPts = [  curveX';
-                curveY';
-                curveZ';];
-                
+PointsXY = GenPolyGridPoints(MapRefCorners(:,1),MapRefCorners(:,2),spacingDx);
+PointsZ = MapRefHeights*ones(length(PointsXY),1);
+ControlPts = [PointsXY';PointsZ'];
 NumControlPts = size(ControlPts,2);
-PATH.ControlPts =ControlPts;
-PATH.POINTS(:,1:NumControlPts) = ControlPts;
-PATH.POINTS(:,NumControlPts+1:end) = repmat(ControlPts(:,end),1,PATH.PtsNumber - NumControlPts);
-%%  Calculate PATH.SegLen and PATH.DATA
+PATH.POINTS(:,1:NumControlPts) = ControlPts; 
+PATH.POINTS(:,NumControlPts+1:end) = ...
+    repmat(ControlPts(:,end),1,PATH.PtsNumber - NumControlPts);
+%%  Calculate PATH.SegLen 
 [~,seglen] = arclength(PATH.POINTS(1,:),PATH.POINTS(2,:),PATH.POINTS(3,:));
 PATH.SegLen = [0,seglen'];
 scaled_distance = cumsum(PATH.SegLen.*PATH.SCALING,2);
 scaled_distance(NumControlPts:end) = ...
-            linspace(scaled_distance(NumControlPts),scaled_distance(NumControlPts)+1,PATH.PtsNumber-NumControlPts+1); % this will ensure the distance values are monotomic
+    linspace(scaled_distance(NumControlPts),...
+    scaled_distance(NumControlPts)+1,...
+    PATH.PtsNumber-NumControlPts+1);
+% this will ensure the distance values are monotomic
+%%  Calculate PATH.DATA
 PATH.DATA = [scaled_distance;PATH.POINTS];
 DrawPathPlan(PATH.DATA);
-save('PathPlan/TargetCurvePath','PATH');
+%%  Save the path
+Config_mat_path = [getenv('PSMCMD'),'/Config_Mat'];
+save([Config_mat_path,'/',PathName],'PATH');
 end
 
