@@ -1,4 +1,4 @@
-function paramOut=Hybrid_admittance_get_config(tg,paramName)
+function paramOut=Hybrid_adm_get_config(tg,paramName)
 switch paramName
     case 'n'
         id = tg.getparamid('Hybrid Position Force Admittance Control/n','Value');

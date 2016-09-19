@@ -1,8 +1,10 @@
-function Hybrid_admitance_set_goal_pose(tg,det_p,det_quat,varargin)
+function Hybrid_adm_set_goal_pose(tg,det_p,det_quat,varargin)
 %%  By Long Wang, 2015/7/6
 %   For set convenient, p => Incremental position
 %   quat => absolute orientaion
-
+%   This func sets the goal pose
+%   Alternatively, you can also specify a trajectory following the path
+%   genration example "GenRasterScanPath"
 dtudp=0.004;
 %%  Parse the input
 MotionMode= 'absolute';
@@ -18,7 +20,7 @@ if numel(varargin)
         end
     end
 end
-Hybrid_admittance_config(tg,'go',0);
+Hybrid_adm_config(tg,'go',0);
 Task_space_set_mode(tg,2);
 %%  Set position
 if strcmp(MotionMode,'absolute')
@@ -42,7 +44,7 @@ id = tg.getparamid(...
 tg.setparam(id,quat_f);
 %%  Set Go
 logger=dvrk_logger;
-Hybrid_admittance_config(tg,'go',1);
+Hybrid_adm_config(tg,'go',1);
 if ~strcmp(LogName,'nolog')
     fprintf('\nLogging...\n');
     reverseStr = [];
