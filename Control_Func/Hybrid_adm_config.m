@@ -3,7 +3,7 @@ function Hybrid_adm_config(tg,paramName,paramValue)
 %   By Long Wang, 2016/7/6
 %   Properties include:
 %   n -                 the force control direction
-%   go -                enable to go comand
+%   go -                enable "go" comand for "set goal pose mode"
 %   sine_go -           sine superimposed enable
 %   f_bias -            the biased force command
 %   K_adm -             the force admittance gain matrix
@@ -15,7 +15,13 @@ switch paramName
     case 'n'
         id = tg.getparamid('Hybrid Position Force Admittance Control/n','Value');
     case 'go'
-        id = tg.getparamid('Hybrid Position Force Admittance Control/go','Value');
+        %%  Note that this is only effective under "goal pose" mode
+        %   Under Hybrid admittance controller, there are two trajectory
+        %   mode:
+        %       1) 'path' - meaning loading a pre-defined trjactory path
+        %       2) 'goal' - meaning just set a final goal pose.
+        id = tg.getparamid(...
+            'Hybrid Position Force Admittance Control/Desired Trajectory/go','Value');
     case 'sine_go'
         id = tg.getparamid(...
             'Hybrid Position Force Admittance Control/Superimposed Position and Force/sine go',...
@@ -30,7 +36,7 @@ switch paramName
             'Value');
         if strcmp(paramValue,'path')
             mode_value = 1;
-        else 
+        elseif strcmp(paramValue,'goal') 
             mode_value = 0;
         end
         paramValue = mode_value;

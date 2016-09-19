@@ -1,8 +1,12 @@
-function PATH = GenRasterScanPath(MapRefCorners,MapRefHeights,varargin)
+function PATH = GenRasterScanPath(MapRefName,varargin)
 %%  Generate Raster Scan Path
 %   Long Wang, 2016/9/17
+%%  Example usage:
+%   GenRasterScanPath('ExplrMapRef','path name','ExplrMapRefRaster');
 %%  Input
-%   MapRefCorners -
+%   MapRefName -    the mat file name of the Map corners and heights
+%                   inside the mat file, you should see two variables:
+%                   MapRefCorners (N by 3), MapRefHeights(N by 1, or 1 by 1)
 %%  Properties of struct PATH
 %   PATH.PtsNumber  ->  Total number of points
 %   PATH.POINTS     ->  (3 X N) matrix all point coord
@@ -28,7 +32,11 @@ if numel(varargin)
         end
     end
 end
-
+%%  Load the corners of the map
+Config_mat_path = [getenv('PSMCMD'),'/Config_Mat'];
+Map_Data_Load = load([Config_mat_path,'/',MapRefName]);
+MapRefCorners = Map_Data_Load.MapRefCorners;
+MapRefHeights = Map_Data_Load.MapRefHeights;
 %%  Create a PATH struct format
 PATH.PtsNumber = 1000;
 PATH.POINTS = zeros(3,PATH.PtsNumber);
@@ -37,13 +45,13 @@ PATH.SCALING = ones(1,PATH.PtsNumber);
 PATH.DATA = zeros(4,PATH.PtsNumber);
 %%  Calculate PATH.POINTS
 PointsXY = GenPolyGridPoints(MapRefCorners(:,1),MapRefCorners(:,2),spacingDx);
-PointsZ = MapRefHeights*ones(length(PointsXY),1);
+PointsZ = mean(MapRefHeights)*ones(length(PointsXY),1);
 ControlPts = [PointsXY';PointsZ'];
 NumControlPts = size(ControlPts,2);
-PATH.POINTS(:,1:NumControlPts) = ControlPts; 
+PATH.POINTS(:,1:NumControlPts) = ControlPts;
 PATH.POINTS(:,NumControlPts+1:end) = ...
     repmat(ControlPts(:,end),1,PATH.PtsNumber - NumControlPts);
-%%  Calculate PATH.SegLen 
+%%  Calculate PATH.SegLen
 [~,seglen] = arclength(PATH.POINTS(1,:),PATH.POINTS(2,:),PATH.POINTS(3,:));
 PATH.SegLen = [0,seglen'];
 scaled_distance = cumsum(PATH.SegLen.*PATH.SCALING,2);
@@ -56,7 +64,6 @@ scaled_distance(NumControlPts:end) = ...
 PATH.DATA = [scaled_distance;PATH.POINTS];
 DrawPathPlan(PATH.DATA);
 %%  Save the path
-Config_mat_path = [getenv('PSMCMD'),'/Config_Mat'];
 save([Config_mat_path,'/',PathName],'PATH');
 end
 
