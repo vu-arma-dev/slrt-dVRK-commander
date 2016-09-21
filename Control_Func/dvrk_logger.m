@@ -147,6 +147,9 @@ classdef dvrk_logger < handle
             end
             %%  Define/Open VideoWriter obj
             root_path = fileparts(getenv('PSMCMD'));
+            if ~exist([root_path,'\Figures_Videos\'],'dir')
+                mkdir([root_path,'\Figures_Videos\']);
+            end
             v = VideoWriter([root_path,'\Figures_Videos\',videoName],'MPEG-4');
             v.Quality = 100;
             %   Calculate fps
@@ -172,7 +175,6 @@ classdef dvrk_logger < handle
             N_samples = length(self.plotData.contact_flags);
             fprintf('Video being generated ...\n');
             reverseStr = [];
-            N_samples = 300;
             for k = 1:N_samples
                 if self.plotData.contact_flags(k)==1
                     % figure clean up and view set up
