@@ -35,7 +35,7 @@ end
 id = tg.getparamid(...
     'Hybrid Position Force Admittance Control/Desired Trajectory/p_ref',...
     'Value');
-p_f=p_f(:);
+p_f = p_f(:);
 tg.setparam(id,p_f);
 %%  Set orientation
 id = tg.getparamid(...
@@ -43,7 +43,7 @@ id = tg.getparamid(...
     'Value');
 tg.setparam(id,quat_f);
 %%  Set Go
-logger=dvrk_logger;
+logger = dvrk_logger;
 Hybrid_adm_config(tg,'go',1);
 if ~strcmp(LogName,'nolog')
     fprintf('\nLogging...\n');
