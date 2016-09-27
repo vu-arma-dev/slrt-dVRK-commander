@@ -28,7 +28,6 @@ end
 fprintf('[ok]\n');
 
 %%  Robot moving to touch the surface
-fprintf('Robot is reaching to the surface ... hit any key to continu ...\n');
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*35);
 Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
 Hybrid_adm_config(PSM_CMD,'n',[0;0;1]);
@@ -42,7 +41,9 @@ while Get_robot_force_info(PSM_CMD,'contact')
     pause(0.05);
 end
 fprintf('[ok]\n');
-
+%%  Turn on the adaptive force control direction mode and adaptive wrist control
+Hybrid_adm_config(PSM_CMD,'wrist mode','adaptive');
+Hybrid_adm_config(PSM_CMD,'force dir mode','adaptive');
 %%  Start raster scan trajectory
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','go');
 
