@@ -20,11 +20,13 @@ SaveResult = 0;
 clc;
 fprintf('Manually move the PSM to a point and \n');
 fprintf('[empty] - save this point \n');
+fprintf('[h] - save the map height using this point \n');
 fprintf('[s] - save all the points and quit  \n');
 fprintf('[q] - quit without saving previous points \n');
 N = 30;
 MapRefCorners = zeros(N,2);
-MapRefHeights = zeros(N,1);
+MapRefCornersZ = zeros(N,1);
+MapRefHeights = nan;
 idx = 1;
 while DefineNextPoint
     KeyInput = input('Select:','s');
@@ -32,19 +34,25 @@ while DefineNextPoint
         case ''
             [p,~] = Task_space_get_pose_cur(PSM_CMD);
             MapRefCorners(idx,:) = p(1:2);
-            MapRefHeights(idx) = p(3);
+            MapRefCornersZ(idx) = p(3);
             fprintf('Boudary point %0.0f added.\n',idx);
             idx = idx + 1;
+        case 'h'
+            [p,~] = Task_space_get_pose_cur(PSM_CMD);
+            MapRefHeights = p(3);
+            fprintf('Map height defined.\n');            
         case 's'
             SaveResult = 1;
             DefineNextPoint = 0;
+            if isnan(MapRefHeights)
+                MapRefHeights = mean(MapRefCornersZ);
+            end
         case 'q'
             DefineNextPoint = 0;
     end
 end
 if SaveResult==1
     MapRefCorners(idx:end,:) =[];
-    MapRefHeights(idx:end,:) =[];
     Config_mat_path = [getenv('PSMCMD'),'/Config_Mat'];
     save([Config_mat_path,'/',MapName],'MapRefCorners','MapRefHeights');
     GenRasterScanPath(MapName,'path name',[MapName,'Raster']);

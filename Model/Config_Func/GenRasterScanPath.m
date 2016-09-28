@@ -44,10 +44,14 @@ PATH.SegLen = zeros(1,PATH.PtsNumber);
 PATH.SCALING = ones(1,PATH.PtsNumber);
 PATH.DATA = zeros(4,PATH.PtsNumber);
 %%  Calculate PATH.POINTS
-PointsXY = GenPolyGridPoints(MapRefCorners(:,1),MapRefCorners(:,2),spacingDx);
-PointsZ = mean(MapRefHeights)*ones(length(PointsXY),1);
-ControlPts = [PointsXY';PointsZ'];
-NumControlPts = size(ControlPts,2);
+NumControlPts = PATH.PtsNumber+1;
+while NumControlPts>PATH.PtsNumber
+    PointsXY = GenPolyGridPoints(MapRefCorners(:,1),MapRefCorners(:,2),spacingDx);
+    PointsZ = mean(MapRefHeights)*ones(length(PointsXY),1);
+    ControlPts = [PointsXY';PointsZ'];
+    NumControlPts = size(ControlPts,2);
+    spacingDx = sqrt(1.05)*spacingDx;
+end
 PATH.POINTS(:,1:NumControlPts) = ControlPts;
 PATH.POINTS(:,NumControlPts+1:end) = ...
     repmat(ControlPts(:,end),1,PATH.PtsNumber - NumControlPts);
