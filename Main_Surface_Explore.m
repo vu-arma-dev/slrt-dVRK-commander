@@ -72,8 +72,8 @@ Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','go');
 
 %%  Start logger
 dtudp=0.004;
-logger=dvrk_logger;
 if ~strcmp(LogName,'nolog')
+    logger=dvrk_logger(LogName);
     fprintf('\nLogging...\n');
     reverseStr = [];
     trajState = Get_robot_status(PSM_CMD,'trajState');
@@ -95,8 +95,5 @@ if ~strcmp(LogName,'nolog')
     end
     logger.end_log;
     fprintf('\nlog finished.\n');
-    root_path = fileparts(getenv('PSMCMD'));
-    data_path = [root_path,'/Data'];
-    save([data_path,'/',LogName],'logger');
 end
 end

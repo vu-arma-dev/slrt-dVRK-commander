@@ -4,6 +4,7 @@ classdef dvrk_logger < handle
     %   Last modifed by Long, 2016/9/20
     %   This class is used to log the data from the PSM robot.
     properties (SetAccess = public)
+        logName
         logs
         current_log
         start_time
@@ -84,12 +85,13 @@ classdef dvrk_logger < handle
                 force_mag = diag(sqrt(force'*force));
                 contact_flags = (force_mag>force_thresh);
                 force_dir = zeros(3,N_samples);
-                force_dir(contact_flags) = normc(force(contact_flags));
+                force_dir(:,contact_flags) = normc(force(:,contact_flags));
                 %   apply offest in force direction
                 contact_pos = position - force_dir*r_ball;
                 %   append the results to log
                 self.logs(i).contact_flags = contact_flags;
                 self.logs(i).contact_pos = contact_pos;
+                self.logs(i).surf_normal = force_dir;
             end
         end
         function plot_explr_map(self)
@@ -99,11 +101,17 @@ classdef dvrk_logger < handle
             %%  Format all seperated N logs to giant 3D matrix
             N_logs = size(self.logs,2);
             contact_pos_merged_3D = nan(3,self.max_log_length,N_logs);
+            surf_normal_merged_3D = nan(3,self.max_log_length,N_logs);
+            wrist_quat_merged_3D = nan(4,self.max_log_length,N_logs);
             contact_flags_merged_2D = nan(self.max_log_length,N_logs);
             for i = 1:N_logs
                 N_samples = length(self.logs(i).time);
                 contact_pos_merged_3D(:,1:N_samples,i) = ...
                     self.logs(i).contact_pos;
+                surf_normal_merged_3D(:,1:N_samples,i) = ...
+                    self.logs(i).surf_normal;
+                wrist_quat_merged_3D(:,1:N_samples,i) = ...
+                    self.logs(i).quat;
                 contact_flags_merged_2D(1:N_samples,i) = ...
                     self.logs(i).contact_flags;
             end
@@ -113,6 +121,10 @@ classdef dvrk_logger < handle
             %   each log. Because reshape is following columns
             contact_pos_merged = reshape(contact_pos_merged_3D,...
                 [3,N_logs*self.max_log_length]);
+            surf_normal_merged = reshape(surf_normal_merged_3D,...
+                [3,N_logs*self.max_log_length]);
+            wrist_quat_merged = reshape(wrist_quat_merged_3D,...
+                [4,N_logs*self.max_log_length]);
             contact_flags_merged = reshape(contact_flags_merged_2D,...
                 [N_logs*self.max_log_length,1]);
             %%  Delete all nan elements in the last log
@@ -120,9 +132,14 @@ classdef dvrk_logger < handle
             nan_idx = isnan(contact_flags_merged);
             contact_flags_merged(nan_idx) = [];
             contact_pos_merged(:,nan_idx) = [];
-            self.plotData = struct('contact_flags',[],'contact_pos',[]);
+            surf_normal_merged(:,nan_idx) = [];
+            wrist_quat_merged(:,nan_idx) = [];
+            self.plotData = struct('contact_flags',[],...
+                'contact_pos',[],'surf_normal',[],'wrist_quat',[]);
             self.plotData.contact_flags = contact_flags_merged;
             self.plotData.contact_pos = contact_pos_merged;
+            self.plotData.surf_normal = surf_normal_merged;
+            self.plotData.wrist_quat = wrist_quat_merged;
             %%  plot
             figure;
             hold on;
@@ -181,12 +198,32 @@ classdef dvrk_logger < handle
                     cla;
                     view(az,el);
                     axis(view_lim);
+                    %   plot the current exploration map
                     points_idx_so_far = 1:k;
                     points_idx_so_far_contact = ...
                         points_idx_so_far(self.plotData.contact_flags(1:k)==1);
-                    scatter3(self.plotData.contact_pos(1,points_idx_so_far),...
+                    scatter3(self.plotData.contact_pos(1,points_idx_so_far_contact),...
                         self.plotData.contact_pos(2,points_idx_so_far_contact),...
-                        self.plotData.contact_pos(3,points_idx_so_far_contact),scatter_size);
+                        self.plotData.contact_pos(3,points_idx_so_far_contact),...
+                        scatter_size);
+                    %   plot the force direction
+                    force_arrow_end = 10*self.plotData.surf_normal(:,k)+...
+                        self.plotData.contact_pos(:,k);
+                    scatter3(self.plotData.contact_pos(1,k),...
+                        self.plotData.contact_pos(2,k),...
+                        self.plotData.contact_pos(3,k),5,'filled','m');
+                    plot3([self.plotData.contact_pos(1,k),force_arrow_end(1)],...
+                        [self.plotData.contact_pos(2,k),force_arrow_end(2)],...
+                        [self.plotData.contact_pos(3,k),force_arrow_end(3)],...
+                        '-r','LineWidth',2);
+                    %   plot the wrist orientation
+                    R_wrist = quat2rotm(self.plotData.wrist_quat(:,k)');
+                    z_wrist = R_wrist(:,3);
+                    wrist_arrow_end = -10*z_wrist + self.plotData.contact_pos(:,k);
+                    plot3([self.plotData.contact_pos(1,k),wrist_arrow_end(1)],...
+                        [self.plotData.contact_pos(2,k),wrist_arrow_end(2)],...
+                        [self.plotData.contact_pos(3,k),wrist_arrow_end(3)],...
+                        '-g','LineWidth',2);
                     frame = getframe;
                     writeVideo(v,frame);
                     msg = sprintf('%3.2f percent ... ',k/N_samples*100);
@@ -196,6 +233,18 @@ classdef dvrk_logger < handle
             end
             fprintf(' [ok].');
             close(v);
+        end
+        function save(self)
+            %%  save the logger object 
+            %   use this function only if you have setup the env variable
+            %   "PSMCMD"
+            root_path = fileparts(getenv('PSMCMD'));
+            data_path = [root_path,'/Data'];
+            if ~exist(data_path,'dir')
+                mkdir(data_path);
+            end
+            logger = self;
+            save([data_path,'/',self.logName],'logger');     
         end
     end
     methods(Static)
