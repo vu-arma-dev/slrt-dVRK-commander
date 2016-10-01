@@ -16,9 +16,7 @@ function Hybrid_adm_config(tg,paramName,paramValue)
 %                       trajectory generator
 switch paramName
     case 'n'
-        BlockName = ['Hybrid Position Force Admittance Control/',...
-            'Force Control Direction/Default Force Control Direction'];
-        id = tg.getparamid(BlockName,'Value');
+        id = tg.getparamid('','ForceCtrlDefaultDir');
     case 'force dir mode'
         BlockName = ['Hybrid Position Force Admittance Control/',...
             'Force Control Direction/ForceDirMode'];

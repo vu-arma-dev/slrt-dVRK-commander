@@ -5,7 +5,7 @@ function Main_Surface_Explore(ExplrPathName,varargin)
 if nargin<1
     ExplrPathName = input('Give Exploration path file name:(ExplrMapZone1Raster)','s');
 end
-wrist_mode= 'fixed';
+wrist_mode= 'adaptive';
 force_dir = 'adaptive';
 LogName = nan;
 if numel(varargin)
@@ -55,14 +55,14 @@ Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
 t0 = tic;
 reverseStr = [];
-while Get_robot_force_info(PSM_CMD,'contact')
+while ~Get_robot_force_info(PSM_CMD,'contact')
     msg = sprintf('%3.2f sec ... ',toc(t0));
     fprintf([reverseStr, msg]);
     reverseStr = repmat(sprintf('\b'), 1, length(msg));
     pause(0.05);
 end
 fprintf('[ok]\n');
-fprintf('hit any key to continue ...\n');
+fprintf('Hit any key to start the surface exploration ...\n');
 pause;
 %%  Turn on the adaptive force control direction mode and adaptive wrist control
 Hybrid_adm_config(PSM_CMD,'wrist mode',wrist_mode);

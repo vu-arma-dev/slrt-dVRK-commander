@@ -17,7 +17,8 @@ classdef dvrk_logger < handle
     end
     
     methods
-        function self = dvrk_logger()
+        function self = dvrk_logger(logName)
+            self.logName = logName;
             self.max_log_length = 10000;
             self.current_log = struct('time',zeros(1,self.max_log_length), ...
                 'position', zeros(3,self.max_log_length), ...
