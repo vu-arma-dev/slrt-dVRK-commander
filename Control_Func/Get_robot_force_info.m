@@ -28,5 +28,13 @@ switch infoName
             id = tg.getsignalid([BlockName,'p3/s',num2str(i)]);
             queryValue(i) = tg.getsignal(id);
         end
+    case 'surface_normal_force'
+        BlockName =['Contact and Force Compute/',...
+            'Friction Compensation/'];
+        queryValue = zeros(3,1);
+        for i = 1:3
+            id = tg.getsignalid([BlockName,'p1/s',num2str(i)]);
+            queryValue(i) = tg.getsignal(id);
+        end
 end
 end

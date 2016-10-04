@@ -7,6 +7,7 @@ if nargin<1
 end
 wrist_mode= 'adaptive';
 force_dir = 'adaptive';
+frictionComp = 'none';
 LogName = nan;
 if numel(varargin)
     for i = 1:2:numel(varargin)
@@ -16,6 +17,8 @@ if numel(varargin)
             wrist_mode = propertyValue;
         elseif strcmp(propertyName,'force direction')
             force_dir = propertyValue;
+        elseif strcmp(propertyName,'friction comp')
+            frictionComp= propertyValue;
         elseif strcmp(propertyName,'log name')
             LogName = propertyValue;
         end
@@ -82,7 +85,11 @@ if ~strcmp(LogName,'nolog')
             %         Get and log position, force, quaternion
             t0=tic;
             [pos,quat]=Task_space_get_pose_cur(PSM_CMD);
-            force=Get_robot_force_info(PSM_CMD);
+            if strcmp(frictionComp,'projection')
+                force=Get_robot_force_info(PSM_CMD,'surface_normal_force');
+            elseif strcmp(frictionComp,'none')
+                force=Get_robot_force_info(PSM_CMD);
+            end
             logger.log_position_force_quat(pos,force,quat);
             % Wait for the next UDP call
             while toc(t0)<dtudp
@@ -94,6 +101,7 @@ if ~strcmp(LogName,'nolog')
         trajState = Get_robot_status(PSM_CMD,'trajState');
     end
     logger.end_log;
+    logger.save;
     fprintf('\nlog finished.\n');
 end
 end
