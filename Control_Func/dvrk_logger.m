@@ -99,12 +99,16 @@ classdef dvrk_logger < handle
             %%  Plot the exploration result map and store data to plotData
             %   Only the collected points that are detected as contacts are
             %   plotted.
+            %%  Note that usually one logger only has two logs.
+            %   The first log contains huge data
+            %   The second log is the most recent collection.
             %%  Format all seperated N logs to giant 3D matrix
+            max_log_length = length(self.logs(1).time);
             N_logs = size(self.logs,2);
-            contact_pos_merged_3D = nan(3,self.max_log_length,N_logs);
-            surf_normal_merged_3D = nan(3,self.max_log_length,N_logs);
-            wrist_quat_merged_3D = nan(4,self.max_log_length,N_logs);
-            contact_flags_merged_2D = nan(self.max_log_length,N_logs);
+            contact_pos_merged_3D = nan(3,max_log_length,N_logs);
+            surf_normal_merged_3D = nan(3,max_log_length,N_logs);
+            wrist_quat_merged_3D = nan(4,max_log_length,N_logs);
+            contact_flags_merged_2D = nan(max_log_length,N_logs);
             for i = 1:N_logs
                 N_samples = length(self.logs(i).time);
                 contact_pos_merged_3D(:,1:N_samples,i) = ...
@@ -121,13 +125,13 @@ classdef dvrk_logger < handle
             %   The current conversion is ONLY working for (3 by N) for
             %   each log. Because reshape is following columns
             contact_pos_merged = reshape(contact_pos_merged_3D,...
-                [3,N_logs*self.max_log_length]);
+                [3,N_logs*max_log_length]);
             surf_normal_merged = reshape(surf_normal_merged_3D,...
-                [3,N_logs*self.max_log_length]);
+                [3,N_logs*max_log_length]);
             wrist_quat_merged = reshape(wrist_quat_merged_3D,...
-                [4,N_logs*self.max_log_length]);
+                [4,N_logs*max_log_length]);
             contact_flags_merged = reshape(contact_flags_merged_2D,...
-                [N_logs*self.max_log_length,1]);
+                [N_logs*max_log_length,1]);
             %%  Delete all nan elements in the last log
             %   all nan elements are just holders for format purpose
             nan_idx = isnan(contact_flags_merged);
