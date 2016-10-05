@@ -95,7 +95,23 @@ classdef dvrk_logger < handle
                 self.logs(i).surf_normal = force_dir;
             end
         end
-        function plot_explr_map(self)
+        function plot_explr_map(self,varargin)
+            MakeNewFigure= 'on';
+            MarkerSize = 5;
+            MarkerColor = 'b';
+            if numel(varargin)
+                for i = 1:2:numel(varargin)
+                    propertyName = varargin{i};
+                    propertyValue = varargin{i+1};
+                    if strcmp(propertyName,'new figure')
+                        MakeNewFigure = propertyValue;
+                    elseif strcmp(propertyName,'MarkerSize')
+                        MarkerSize = propertyValue;
+                    elseif strcmp(propertyName,'MarkerColor')
+                        MarkerColor = propertyValue;
+                    end
+                end
+            end
             %%  Plot the exploration result map and store data to plotData
             %   Only the collected points that are detected as contacts are
             %   plotted.
@@ -146,13 +162,15 @@ classdef dvrk_logger < handle
             self.plotData.surf_normal = surf_normal_merged;
             self.plotData.wrist_quat = wrist_quat_merged;
             %%  plot
-            figure;
-            hold on;
-            axis equal;
+            if strcmp(MakeNewFigure,'on')
+                figure;
+                hold on;
+                axis equal;
+                view(126,48);
+            end
             scatter3(contact_pos_merged(1,contact_flags_merged==1),...
                 contact_pos_merged(2,contact_flags_merged==1),...
-                contact_pos_merged(3,contact_flags_merged==1),5);
-            view(126,48);
+                contact_pos_merged(3,contact_flags_merged==1),MarkerSize,MarkerColor);
         end
         function gen_explr_video(self,varargin)
             %%  This func generates video of the exploration
@@ -189,7 +207,7 @@ classdef dvrk_logger < handle
             scatter3(self.plotData.contact_pos(1,self.plotData.contact_flags==1),...
                 self.plotData.contact_pos(2,self.plotData.contact_flags==1),...
                 self.plotData.contact_pos(3,self.plotData.contact_flags==1),scatter_size);
-            view(115,22);            
+            view(115,22);
             fprintf('Adjust the view for video generation ... hit any key to continue ... \n');
             pause;
             [az,el] = view;
@@ -240,7 +258,7 @@ classdef dvrk_logger < handle
             close(v);
         end
         function save(self)
-            %%  save the logger object 
+            %%  save the logger object
             %   use this function only if you have setup the env variable
             %   "PSMCMD"
             root_path = fileparts(getenv('PSMCMD'));
@@ -249,7 +267,7 @@ classdef dvrk_logger < handle
                 mkdir(data_path);
             end
             logger = self;
-            save([data_path,'/',self.logName],'logger');     
+            save([data_path,'/',self.logName],'logger');
         end
     end
     methods(Static)
