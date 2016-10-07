@@ -18,14 +18,18 @@ fprintf('[empty] - save this point \n');
 fprintf('[s] - save all the points and quit  \n');
 fprintf('[q] - quit without saving previous points \n');
 N = 200;
-DigitizedPoints = zeros(N,3);
+DigitizedProbeCenters = zeros(N,3);
+ForceDigitized = zeros(N,3);
 idx = 1;
 while DefineNextPoint
     KeyInput = input('Select:','s');
     switch KeyInput
         case ''
             [p,~] = Task_space_get_pose_cur(PSM_CMD);
-            DigitizedPoints(idx,:) = p;
+            DigitizedProbeCenters(idx,:) = p;
+            % The force direction is needed to compensate the offset from
+            % the probe center to the surface contacts
+            ForceDigitized(idx,:)= Get_robot_force_info(PSM_CMD);
             fprintf('Point position %0.0f digitized.\n',idx);
             idx = idx + 1;
         case 's'
@@ -36,10 +40,15 @@ while DefineNextPoint
     end
 end
 if SaveResult==1
-    DigitizedPoints(idx:end,:) =[];
+    r_probe = 6.3/2;
+    DigitizedProbeCenters(idx:end,:) =[];
+    ForceDigitized(idx:end,:) = [];
+    OffsetProbe = r_probe*normr(ForceDigitized);
+    DigitizedPoints = DigitizedProbeCenters - OffsetProbe;
     root_path = fileparts(getenv('PSMCMD'));
     data_path = [root_path,'/Data'];
-    save([data_path,'/',DataName],'DigitizedPoints');
+    save([data_path,'/',DataName],...
+        'DigitizedPoints','DigitizedProbeCenters','ForceDigitized');
 end
 end
 
