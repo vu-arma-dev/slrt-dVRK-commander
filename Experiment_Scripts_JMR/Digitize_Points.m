@@ -9,7 +9,7 @@ if nargin<1
         DataName = 'DigitizedPoints';
     end
 end
-PSM_CMD = Initialize_PSM_CMD;
+PSM_CMD = Initialize_PSM_CMD('GoHome','on');
 DefineNextPoint = 1;
 SaveResult = 0;
 clc;
