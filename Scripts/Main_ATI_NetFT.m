@@ -1,8 +1,19 @@
-function ATI_NetFT = Main_ATI_NetFT()
+function ATI_NetFT = Main_ATI_NetFT(varargin)
 %%  Main func for ATI Net FT application
 %   By Long Wang
 %   This func starts the xPC application that does the same protocol as ATI
 %   Net FT box
+%%  parse the input:
+MachineName= 'xPC202';
+if numel(varargin)
+    for i = 1:2:numel(varargin)
+        propertyName = varargin{i};
+        propertyValue = varargin{i+1};
+        if strcmp(propertyName,'machine')
+            MachineName = propertyValue;
+        end
+    end
+end
 %%  Folder path
 Model_path = getenv('PSMCMD');
 ECL_path = getenv('ECLDIR');
@@ -13,9 +24,16 @@ addpath(genpath(working_dir),...
     genpath(ECL_path));
 fprintf('..[ok]\n');
 %%  xPC Model information
-address = '192.168.1.202';              % ARMA PC Target Address
-port = '22222';                         % Target Port
-filename = 'ATI_NetFT';
+switch MachineName
+    case 'xPC202'
+        address = '192.168.1.202';              % ARMA PC Target Address
+        port = '22222';                         % Target Port
+        filename = 'ATI_NetFT';
+    case 'xPC203'
+        address = '192.168.1.203';              % ARMA PC Target Address
+        port = '22222';                         % Target Port
+        filename = 'ATI_NetFT_Jr';
+end
 full_file_path = [Model_path,'/Build/',filename];
 test = xpctargetping('TCPIP',address,port);
 %%  Start application
@@ -31,6 +49,6 @@ if strcmp(test,'success')
     %%  Unbias the F/T sensor
     Unbias_FT_sensor(ATI_NetFT);
 else
-    fprintf('Fail to connect to xCP machine.\n');    
+    fprintf('Fail to connect to xCP machine.\n');
 end
 end
