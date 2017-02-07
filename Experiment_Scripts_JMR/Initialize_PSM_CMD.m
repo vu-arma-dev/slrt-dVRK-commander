@@ -24,7 +24,7 @@ addpath(genpath(working_dir),...
     genpath(ECL_path));
 fprintf('..[ok]\n');
 %%  xPC Model information
-address = '192.168.1.202';              % ARMA PC Target Address
+address = '192.168.1.145';              % ARMA PC Target Address
 port = '22222';                         % Target Port
 filename = 'PSM_Commander';
 full_file_path = [Model_path,'/Build/',filename];

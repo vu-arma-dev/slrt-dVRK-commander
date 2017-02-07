@@ -4,13 +4,13 @@ function ATI_NetFT = Main_ATI_NetFT(varargin)
 %   This func starts the xPC application that does the same protocol as ATI
 %   Net FT box
 %%  parse the input:
-MachineName= 'xPC202';
+FT_Type= 'nano17';
 if numel(varargin)
     for i = 1:2:numel(varargin)
         propertyName = varargin{i};
         propertyValue = varargin{i+1};
-        if strcmp(propertyName,'machine')
-            MachineName = propertyValue;
+        if strcmp(propertyName,'FT Type')
+            FT_Type = propertyValue;
         end
     end
 end
@@ -24,15 +24,15 @@ addpath(genpath(working_dir),...
     genpath(ECL_path));
 fprintf('..[ok]\n');
 %%  xPC Model information
-switch MachineName
-    case 'xPC202'
-        address = '192.168.1.202';              % ARMA PC Target Address
+switch FT_Type
+    case 'gamma'
+        address = '192.168.1.145';              % ARMA PC Target Address
         port = '22222';                         % Target Port
         filename = 'ATI_NetFT';
-    case 'xPC203'
-        address = '192.168.1.203';              % ARMA PC Target Address
+    case 'nano17'
+        address = '192.168.1.145';              % ARMA PC Target Address
         port = '22222';                         % Target Port
-        filename = 'ATI_NetFT_Jr';
+        filename = 'ATI_NetFT_nano17';        
 end
 full_file_path = [Model_path,'/Build/',filename];
 test = xpctargetping('TCPIP',address,port);
