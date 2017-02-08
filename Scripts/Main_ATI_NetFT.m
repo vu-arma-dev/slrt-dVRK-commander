@@ -47,7 +47,8 @@ if strcmp(test,'success')
     fprintf(' [Ok]\n');
     ATI_NetFT.start;
     %%  Unbias the F/T sensor
-    Unbias_FT_sensor(ATI_NetFT);
+%     pause(3);
+%     Unbias_FT_sensor(ATI_NetFT);
 else
     fprintf('Fail to connect to xCP machine.\n');
 end
