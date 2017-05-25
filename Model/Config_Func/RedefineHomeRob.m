@@ -6,7 +6,7 @@ function RedefineHomeRob(tg)
 %   The home pose is the pose that the robot is initialized to go.
 %   The home pose is NOT the origin of the robot base.
 if nargin<1
-    address = '192.168.1.201';              % ARMA PC Target Address
+    address = '192.168.1.145';              % ARMA PC Target Address
     port = '22222';                         % Target Port
     tg = xpc('TcpIp',address,port);    
 end
