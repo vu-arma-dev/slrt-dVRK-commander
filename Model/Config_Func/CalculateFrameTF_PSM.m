@@ -48,4 +48,3 @@ T_Org2Rob = [R_organ2robot,p_organ_in_robot;...
 T_Rob2Org = inv(T_Org2Rob);
 save([Config_mat_path,'/Org2Rob_Frame'],'T_Org2Rob','T_Rob2Org');
 end
-

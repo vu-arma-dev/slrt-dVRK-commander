@@ -11,4 +11,3 @@ fprintf('Start to build model.\n');
 slbuild(model_name);
 cd(current_dir);
 end
-
