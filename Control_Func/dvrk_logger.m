@@ -76,8 +76,13 @@ classdef dvrk_logger < handle
                     end
                 end
             end
+            fprintf('Computing all of the contact points in the exploration ...');
+            reverseStr = [];
             N_logs = size(self.logs,2);
             for i = 1:N_logs
+                msg = sprintf('%0.0f log of %0.0f ... ',i,N_logs);
+                fprintf([reverseStr, msg]);
+                reverseStr = repmat(sprintf('\b'), 1, length(msg));
                 %   info from the exploration
                 N_samples = length(self.logs(i).time);
                 force = self.logs(i).force;
@@ -94,6 +99,7 @@ classdef dvrk_logger < handle
                 self.logs(i).contact_pos = contact_pos;
                 self.logs(i).surf_normal = force_dir;
             end
+            fprintf('[ok]\n');
         end
         function plot_explr_map(self,varargin)
             MakeNewFigure= 'on';
