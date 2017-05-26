@@ -17,11 +17,16 @@ switch ExplrName
         ZoneNames{4} = 'zone4_adp_wrist_cdp';
         ZoneColors = {'g','m','c','b'};
         pointCloud_All_Zones = cell(4,1);
-    case 'Hamlyn'        
+    case 'Hamlyn'
+        ZoneNames = cell(4,1);
+        ZoneNames{1} = 'Hamlyn_Zone1_T1';
+        ZoneNames{2} = 'Hamlyn_Zone2_T1';
+        ZoneNames{3} = 'Hamlyn_Zone3_T1';
+        ZoneNames{4} = 'Hamlyn_Zone4_T1';
+        ZoneColors = {'g','m','c','b'};
+        pointCloud_All_Zones = cell(4,1);
 end
 N_zones = length(ZoneNames);
-fprintf('Compute contacts and plot exploration data for different zones ...\n');
-reverseStr = [];
 for i = 1:N_zones
     %   load exploration data
     load([data_path,'/',ZoneNames{i}]);
@@ -34,9 +39,7 @@ for i = 1:N_zones
         logger.plot_explr_map('new figure','off',...
             'MarkerSize',1,'MarkerColor',ZoneColors{i});
     end
-    msg = sprintf('%0.0f zones of %0.0f finished ... ',i,N_zones);
-    fprintf([reverseStr, msg]);
-    reverseStr = repmat(sprintf('\b'), 1, length(msg));
+    fprintf('%0.0f zones of %0.0f finished ... \n',i,N_zones);
     %   pass to point cloud data structure
     contact_positions = logger.plotData.contact_pos;
     contact_flags = logger.plotData.contact_flags;
