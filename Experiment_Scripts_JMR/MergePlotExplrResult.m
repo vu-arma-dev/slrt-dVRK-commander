@@ -19,10 +19,10 @@ switch ExplrName
         pointCloud_All_Zones = cell(4,1);
     case 'Hamlyn'
         ZoneNames = cell(4,1);
-        ZoneNames{1} = 'Hamlyn_Zone1_T1';
-        ZoneNames{2} = 'Hamlyn_Zone2_T1';
-        ZoneNames{3} = 'Hamlyn_Zone3_T1';
-        ZoneNames{4} = 'Hamlyn_Zone4_T1';
+        ZoneNames{1} = 'Hamlyn_V2_Z1';
+        ZoneNames{2} = 'Hamlyn_V2_Z2';
+        ZoneNames{3} = 'Hamlyn_V2_Z3';
+        ZoneNames{4} = 'Hamlyn_V2_Z4';
         ZoneColors = {'g','m','c','b'};
         pointCloud_All_Zones = cell(4,1);
 end
