@@ -46,7 +46,7 @@ while Get_robot_status(PSM_CMD,'trajState')==1
     msg = sprintf('%3.2f sec ... ',toc(t0));
     fprintf([reverseStr, msg]);
     reverseStr = repmat(sprintf('\b'), 1, length(msg));
-    pause(0.05);
+    countDownXPC(PSM_CMD,0.05);
 end
 fprintf('[ok]\n');
 fprintf('hit any key to continue ...\n');
@@ -62,7 +62,7 @@ while ~Get_robot_force_info(PSM_CMD,'contact')
     msg = sprintf('%3.2f sec ... ',toc(t0));
     fprintf([reverseStr, msg]);
     reverseStr = repmat(sprintf('\b'), 1, length(msg));
-    pause(0.05);
+    countDownXPC(PSM_CMD,0.05);
 end
 fprintf('[ok]\n');
 fprintf('Hit any key to start the surface exploration ...\n');
@@ -72,37 +72,56 @@ Hybrid_adm_config(PSM_CMD,'wrist mode',wrist_mode);
 Hybrid_adm_config(PSM_CMD,'force dir mode',force_dir);
 %%  Start raster scan trajectory
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','go');
-%%  Pause every "pause_time"
-t0 = tic;
-%%  Start logger
-dtudp=0.004;
+%%  The probing parameters
+nProbingDepth = 10;
+minForce = 0.05;
+maxForce = 1;
+forcesComd = linspace(minForce,maxForce,nProbingDepth);
 if ~strcmp(LogName,'nolog')
-    logger=dvrk_logger(LogName);
-    fprintf('\nLogging...\n');
-    reverseStr = [];
+    fprintf('\nProbing and recording started ...\n');
+    probingLocIdx = 1;
+    scanMotionTime = 1;
     trajState = Get_robot_status(PSM_CMD,'trajState');
     while (trajState == 3) || (trajState == 1) || (trajState == 2)
         if trajState == 3
-            %         Get and log position, force, quaternion
-            t0=tic;
-            [pos,quat]=Task_space_get_pose_cur(PSM_CMD);
-            if strcmp(frictionComp,'projection')
-                force=Get_robot_force_info(PSM_CMD,'surface_normal_force');
-            elseif strcmp(frictionComp,'none')
-                force=Get_robot_force_info(PSM_CMD);
+            %%  Perform a probing motion using force control
+            fprintf('Probing location %0.0f ... ',probingLocIdx);
+            reverseStr = [];
+            %   step 1 - pause the surface following motion
+            Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','pause');
+            countDownXPC(PSM_CMD,0.1); 
+            Hybrid_adm_config(PSM_CMD,'f_bias',0.05);
+            countDownXPC(PSM_CMD,0.1);
+            % a delay for the robot to reoriente the wrist
+            %   step 2 - command the forces and record data
+            logger=dvrk_logger([LogName,num2str(probingLocIdx)]);
+            for i =1:nProbingDepth
+                Hybrid_adm_config(PSM_CMD,'f_bias',forcesComd(i));
+                countDownXPC(PSM_CMD,0.1);
+                % Get and log position, force, quaternion
+                [pos,quat]=Task_space_get_pose_cur(PSM_CMD);
+                if strcmp(frictionComp,'projection')
+                    force=Get_robot_force_info(PSM_CMD,'surface_normal_force');
+                elseif strcmp(frictionComp,'none')
+                    force=Get_robot_force_info(PSM_CMD);
+                end
+                logger.log_position_force_quat(pos,force,quat);
+                msg = sprintf('%0.0f/%0.0f depths ... ',i,nProbingDepth);
+                fprintf([reverseStr, msg]);
+                reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
-            logger.log_position_force_quat(pos,force,quat);
-            % Wait for the next UDP call
-            while toc(t0)<dtudp
-            end
-            msg = sprintf('%0.0f measurements logged ... ',logger.current_log_idx);
-            fprintf([reverseStr, msg]);
-            reverseStr = repmat(sprintf('\b'), 1, length(msg));
+            %   step 3 - resume the scanning motion for a given time
+            Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','resume');
+            logger.end_log;
+            logger.save('Probing');
+            fprintf('[result saved]\n');
+            countDownXPC(PSM_CMD,scanMotionTime);
+            probingLocIdx = probingLocIdx + 1;
         end
         trajState = Get_robot_status(PSM_CMD,'trajState');
     end
-    logger.end_log;
-    logger.save;
     fprintf('\nlog finished.\n');
+else
+    fprintf('\nNo log name given.\n');
 end
 end
