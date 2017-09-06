@@ -13,6 +13,13 @@ switch paramName
     case 'trajectory speed' % [mm/s]
         id = tg.getparamid('','LinInterpTrajSpeed');
         tg.setparam(id,paramValue);
+    case 'ready time'
+        Traj_block_name = ...
+            'Hybrid Position Force Admittance Control/Desired Trajectory';
+        id_ready_time = tg.getparamid(...
+            [Traj_block_name,'/Linear Interp Trajectory Generator/READY_TIME'],...
+            'Value');
+        tg.setparam(id_ready_time,paramValue);
     case 'trajectory state'
         % trajectory state are defined and used in the embedded block
         % "Desired Trajectory/Linear Interp Trajectory Generator"

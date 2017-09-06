@@ -1,10 +1,11 @@
-function launch_trajectory_force_control(PSM_CMD,trajPathName,varargin)
+function logger = Run_trajectory_force_control(PSM_CMD,trajPathName,varargin)
 %%  Demonstration of PSM Exploring Unknown Surface
 %   This experiment is to scan the surface of the enviroment
 %%  Parse optional input
 wrist_mode= 'adaptive';
 force_dir = 'adaptive';
 frictionComp = 'none';
+fBiasCommand = 0.25;
 if numel(varargin)
     for i = 1:2:numel(varargin)
         propertyName = varargin{i};
@@ -15,6 +16,8 @@ if numel(varargin)
             force_dir = propertyValue;
         elseif strcmp(propertyName,'friction comp')
             frictionComp= propertyValue;
+        elseif strcmp(propertyName,'f bias')
+            fBiasCommand = propertyValue;
         end
     end
 end
@@ -28,8 +31,10 @@ Task_space_set_mode(PSM_CMD,2);
 Hybrid_adm_config(PSM_CMD,'n',[0;0;0]);
 Hybrid_adm_config(PSM_CMD,'sine_go',0);
 Hybrid_adm_config(PSM_CMD,'trajectory mode','path');
-Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',trajPathName);
+Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',...
+    ['Trajectories/',trajPathName]);
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',4);
+Hybrid_adm_set_trajectory(PSM_CMD,'ready time',0.5);
 fprintf('Robot is moving to the start poing of the pre-defined path\n');
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','ready');
 t0 = tic;
@@ -41,11 +46,11 @@ while Get_robot_status(PSM_CMD,'trajState')==1
     pause(0.05);
 end
 fprintf('[ok]\n');
-fprintf('hit any key to continue ...\n');
-pause;
+% fprintf('hit any key to continue ...\n');
+% pause;
 %%  Robot moving to touch the surface
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*35);
-Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
+Hybrid_adm_config(PSM_CMD,'f_bias',fBiasCommand);
 Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
 t0 = tic;
@@ -57,8 +62,8 @@ while ~Get_robot_force_info(PSM_CMD,'contact')
     pause(0.05);
 end
 fprintf('[ok]\n');
-fprintf('Hit any key to start the surface exploration ...\n');
-pause;
+% fprintf('Hit any key to start the surface exploration ...\n');
+% pause;
 %%  Turn on the adaptive force control direction mode and adaptive wrist control
 Hybrid_adm_config(PSM_CMD,'wrist mode',wrist_mode);
 Hybrid_adm_config(PSM_CMD,'force dir mode',force_dir);
