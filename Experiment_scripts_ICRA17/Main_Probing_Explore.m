@@ -53,7 +53,8 @@ fprintf('hit any key to continue ...\n');
 pause;
 %%  Robot moving to touch the surface
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*35);
-Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
+fScanningForce = 0.7;
+Hybrid_adm_config(PSM_CMD,'f_bias',fScanningForce);
 Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
 t0 = tic;
@@ -73,12 +74,13 @@ Hybrid_adm_config(PSM_CMD,'force dir mode',force_dir);
 %%  Start raster scan trajectory
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','go');
 %%  The probing parameters
-nProbingDepth = 10;
 minForce = 0.05;
-maxForce = 1;
+maxForce = 1.5;
 forcesComd = ...
-    [linspace(minForce,maxForce,nProbingDepth);...
-    linspace(maxForce,minForce,nProbingDepth)];
+    [linspace(fScanningForce,maxForce,10),...
+    linspace(maxForce,minForce,15),...
+    linspace(minForce,fScanningForce,10)];
+nProbingDepth = length(forcesComd);
 if ~strcmp(LogName,'nolog')
     fprintf('\nProbing and recording started ...\n');
     probingLocIdx = 1;
@@ -92,31 +94,27 @@ if ~strcmp(LogName,'nolog')
             %   step 1 - pause the surface following motion
             Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','pause');
             countDownXPC(PSM_CMD,0.1); 
-            Hybrid_adm_config(PSM_CMD,'f_bias',0.05);
-            countDownXPC(PSM_CMD,0.2);
             % a delay for the robot to reoriente the wrist
             %   step 2 - command the forces and record data
             logger=dvrk_logger([LogName,num2str(probingLocIdx)]);
-            for j=1:2
-                for i =1:nProbingDepth
-                    Hybrid_adm_config(PSM_CMD,'f_bias',forcesComd(j,i));
-                    countDownXPC(PSM_CMD,0.2);
-                    % Get and log position, force, quaternion
-                    [pos,quat]=Task_space_get_pose_cur(PSM_CMD);
-                    if strcmp(frictionComp,'projection')
-                        force=Get_robot_force_info(PSM_CMD,'surface_normal_force');
-                    elseif strcmp(frictionComp,'none')
-                        force=Get_robot_force_info(PSM_CMD);
-                    end
-                    logger.log_position_force_quat(pos,force,quat);
-                    msg = sprintf('%0.0f/%0.0f depths ... ',...
-                        (j-1)*nProbingDepth+i,2*nProbingDepth);
-                    fprintf([reverseStr, msg]);
-                    reverseStr = repmat(sprintf('\b'), 1, length(msg));
+            for i =1:nProbingDepth
+                Hybrid_adm_config(PSM_CMD,'f_bias',forcesComd(i));
+                countDownXPC(PSM_CMD,0.4);
+                % Get and log position, force, quaternion
+                [pos,quat]=Task_space_get_pose_cur(PSM_CMD);
+                if strcmp(frictionComp,'projection')
+                    force=Get_robot_force_info(PSM_CMD,'surface_normal_force');
+                elseif strcmp(frictionComp,'none')
+                    force=Get_robot_force_info(PSM_CMD);
                 end
+                logger.log_position_force_quat(pos,force,quat);
+                msg = sprintf('%0.0f/%0.0f depths ... ',...
+                    i,nProbingDepth);
+                fprintf([reverseStr, msg]);
+                reverseStr = repmat(sprintf('\b'), 1, length(msg));
             end
             %   step 3 - resume the scanning motion for a given time
-            Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
+            Hybrid_adm_config(PSM_CMD,'f_bias',fScanningForce);
             countDownXPC(PSM_CMD,0.2);
             Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','resume');
             logger.end_log;
