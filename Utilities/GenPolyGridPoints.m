@@ -39,8 +39,11 @@ higher_y = max(yv);
 interval_x = lower_x:inc_x:higher_x;
 interval_y = lower_y:inc_y:higher_y;
 [bigGridX, bigGridY] = meshgrid(interval_x, interval_y);
+%%  generate raster scan in scanning in X direction
+bigGridX = bigGridX';
+bigGridY = bigGridY';
 if strcmp(scanMode,'raster')
-    bigGridY(:,1:2:end) = flip(bigGridY(:,1:2:end),1);
+    bigGridX(:,1:2:end) = flip(bigGridX(:,1:2:end),1);
 end
 %   Filter grid to get only points in polygon
 in = inpolygon(bigGridX(:), bigGridY(:), xv, yv);

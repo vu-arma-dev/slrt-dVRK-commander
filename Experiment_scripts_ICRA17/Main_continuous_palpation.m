@@ -6,7 +6,7 @@ if nargin<1
     ExplrPathName = input('Give Exploration path file name:(ExplrMapZone1Raster)','s');
 end
 wrist_mode= 'adaptive';
-force_dir = 'adaptive';
+force_dir = 'fixed'; % 'fixed' or 'adaptive'
 frictionComp = 'none';
 LogName = nan;
 if numel(varargin)
@@ -34,8 +34,8 @@ end
 %   Switch the tra
 Task_space_set_mode(PSM_CMD,2);
 Hybrid_adm_config(PSM_CMD,'n',[0;0;0]);
-Hybrid_adm_config(PSM_CMD,'sine_amp',0.8);
-Hybrid_adm_config(PSM_CMD,'sine_freq_Hz',3);
+Hybrid_adm_config(PSM_CMD,'sine_amp',1);
+Hybrid_adm_config(PSM_CMD,'sine_freq_Hz',2);
 Hybrid_adm_config(PSM_CMD,'sine_go',1);
 Hybrid_adm_config(PSM_CMD,'trajectory mode','path');
 Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',ExplrPathName);
@@ -56,7 +56,7 @@ fprintf('hit any key to continue ...\n');
 pause;
 %%  Robot moving to touch the surface
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*25);
-Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
+Hybrid_adm_config(PSM_CMD,'f_bias',0.2);
 Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
 t0 = tic;
