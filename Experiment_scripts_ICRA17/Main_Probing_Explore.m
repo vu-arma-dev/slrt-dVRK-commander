@@ -37,7 +37,7 @@ Hybrid_adm_config(PSM_CMD,'n',[0;0;0]);
 Hybrid_adm_config(PSM_CMD,'sine_go',0);
 Hybrid_adm_config(PSM_CMD,'trajectory mode','path');
 Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',ExplrPathName);
-Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',4);
+Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',2);
 fprintf('Robot is moving to the start poing of the pre-defined path\n');
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','ready');
 t0 = tic;
@@ -53,7 +53,7 @@ fprintf('hit any key to continue ...\n');
 pause;
 %%  Robot moving to touch the surface
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*35);
-fScanningForce = 0.7;
+fScanningForce = 0.5;
 Hybrid_adm_config(PSM_CMD,'f_bias',fScanningForce);
 Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
@@ -75,11 +75,11 @@ Hybrid_adm_config(PSM_CMD,'force dir mode',force_dir);
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','go');
 %%  The probing parameters
 minForce = 0.05;
-maxForce = 1.5;
+maxForce = 1.0;
 forcesComd = ...
-    [linspace(fScanningForce,maxForce,10),...
-    linspace(maxForce,minForce,15),...
-    linspace(minForce,fScanningForce,10)];
+    [linspace(fScanningForce,maxForce,5),...
+    linspace(maxForce,minForce,10),...
+    linspace(minForce,fScanningForce,5)];
 nProbingDepth = length(forcesComd);
 if ~strcmp(LogName,'nolog')
     fprintf('\nProbing and recording started ...\n');

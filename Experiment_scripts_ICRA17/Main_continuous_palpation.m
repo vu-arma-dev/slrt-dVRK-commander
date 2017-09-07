@@ -34,12 +34,12 @@ end
 %   Switch the tra
 Task_space_set_mode(PSM_CMD,2);
 Hybrid_adm_config(PSM_CMD,'n',[0;0;0]);
-Hybrid_adm_config(PSM_CMD,'sine_amp',0.6);
-Hybrid_adm_config(PSM_CMD,'sine_freq_Hz',1.5);
+Hybrid_adm_config(PSM_CMD,'sine_amp',0.8);
+Hybrid_adm_config(PSM_CMD,'sine_freq_Hz',3);
 Hybrid_adm_config(PSM_CMD,'sine_go',1);
 Hybrid_adm_config(PSM_CMD,'trajectory mode','path');
 Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',ExplrPathName);
-Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',2);
+Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',3);
 Hybrid_adm_set_trajectory(PSM_CMD,'ready time',0.2);
 fprintf('Robot is moving to the start poing of the pre-defined path\n');
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory state','ready');
@@ -55,7 +55,7 @@ fprintf('[ok]\n');
 fprintf('hit any key to continue ...\n');
 pause;
 %%  Robot moving to touch the surface
-Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*15);
+Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*25);
 Hybrid_adm_config(PSM_CMD,'f_bias',0.25);
 Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
 fprintf('Robot is reaching to contact surface ...\n');
