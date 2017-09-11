@@ -50,6 +50,9 @@ switch paramName
         elseif strcmp(paramValue,'pause')
             setPause = 1;
             tg.setparam(id_pause,setPause);
+        elseif strcmp(paramValue,'continuePath')
+            setState=3;
+            tg.setparam(id_state,setState);
         elseif strcmp(paramValue,'resume')
             setPause = 0;
             tg.setparam(id_pause,setPause);

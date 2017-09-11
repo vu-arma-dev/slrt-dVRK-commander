@@ -31,6 +31,7 @@ Task_space_set_mode(PSM_CMD,2);
 Hybrid_adm_config(PSM_CMD,'n',[0;0;0]);
 Hybrid_adm_config(PSM_CMD,'sine_go',0);
 Hybrid_adm_config(PSM_CMD,'trajectory mode','path');
+Hybrid_adm_config(PSM_CMD,'force dir mode','fixed');
 Hybrid_adm_set_trajectory(PSM_CMD,'load trajectory',...
     ['Trajectories/',trajPathName]);
 Hybrid_adm_set_trajectory(PSM_CMD,'trajectory speed',4);

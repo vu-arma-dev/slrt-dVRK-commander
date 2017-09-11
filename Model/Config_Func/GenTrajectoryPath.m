@@ -33,7 +33,7 @@ PATH.SegLen = zeros(1,PATH.PtsNumber);
 PATH.SCALING = ones(1,PATH.PtsNumber);
 PATH.DATA = zeros(4,PATH.PtsNumber);
 %%  Calculate PATH.POINTS
-PointsZ = MapRefHeight*ones(length(PointsXY),1);
+PointsZ = MapRefHeight*ones(size(PointsXY,1),1);
 ControlPts = [PointsXY';PointsZ'];
 NumControlPts = size(ControlPts,2);
 PATH.POINTS(:,1:NumControlPts) = ControlPts;
