@@ -12,7 +12,7 @@ function ATI_NetFT = Main_ATI_NetFT(varargin)
 
 %%  parse the input:
 FT_Type= 'nano17';
-Path_Type='Reset';
+Path_Type='Keep';
 if numel(varargin)
     for i = 1:2:numel(varargin)
         propertyName = varargin{i};
@@ -51,6 +51,10 @@ switch FT_Type
         address = '192.168.1.145';              % ARMA PC Target Address
         port = '22222';                         % Target Port
         filename = 'ATI_NetFT_nano43';        
+    case 'nano43_cochlea'
+        address = '192.168.1.167';              % ARMA PC Target Address
+        port = '22222';                         % Target Port
+        filename = 'ATI_NetFT_nano43_cochlea';       
 end
 full_file_path = [Model_path,'/Build/',filename];
 test = xpctargetping('TCPIP',address,port);
