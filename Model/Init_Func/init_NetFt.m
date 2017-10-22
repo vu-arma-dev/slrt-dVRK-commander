@@ -13,3 +13,6 @@ ATI_NetFt_reading_Gain = 1000000;
 % and it is reflected in the parsing function in mtsATINetFTSensor.cpp - 
 % https://github.com/jhu-saw/sawATIForceSensor/blob/df38da0fd6e7176dad737502f219dbaf46491c85/code/mtsATINetFTSensor.cpp#L159
 ATI_NetFt_port = 49152;
+
+N_bias = 1000; % 6000
+filter_coeffs_bias = ones(N_bias,1);

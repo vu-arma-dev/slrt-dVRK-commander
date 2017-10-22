@@ -54,7 +54,11 @@ switch FT_Type
     case 'nano43_cochlea'
         address = '192.168.1.145';              % ARMA PC Target Address
         port = '22222';                         % Target Port
-        filename = 'ATI_NetFT_nano43_cochlea';       
+        filename = 'ATI_NetFT_nano43_cochlea';   
+    case 'nano43_PC104'
+        address = '192.168.1.169';              % ARMA PC Target Address
+        port = '22222';                         % Target Port
+        filename = 'ATI_NetFT_nano43_PC104';   
 end
 full_file_path = [Model_path,'/Build/',filename];
 test = xpctargetping('TCPIP',address,port);
