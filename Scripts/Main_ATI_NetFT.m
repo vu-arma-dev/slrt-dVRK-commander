@@ -52,7 +52,7 @@ switch FT_Type
         port = '22222';                         % Target Port
         filename = 'ATI_NetFT_nano43';        
     case 'nano43_cochlea'
-        address = '192.168.1.167';              % ARMA PC Target Address
+        address = '192.168.1.145';              % ARMA PC Target Address
         port = '22222';                         % Target Port
         filename = 'ATI_NetFT_nano43_cochlea';       
 end
