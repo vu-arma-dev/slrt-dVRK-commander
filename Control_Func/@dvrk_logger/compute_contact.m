@@ -26,7 +26,7 @@ for i = 1:N_logs
     force = self.logs(i).force;
     position = self.logs(i).position;
     %   compute contact information
-    force_mag = diag(sqrt(force'*force));
+    force_mag = sqrt(sum(force.^2));
     contact_flags = (force_mag>force_thresh);
     force_dir = zeros(3,N_samples);
     force_dir(:,contact_flags) = normc(force(:,contact_flags));

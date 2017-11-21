@@ -25,6 +25,16 @@ switch ExplrName
         ZoneNames{4} = 'Hamlyn_V2_Z4';
         ZoneColors = {'g','m','c','b'};
         pointCloud_All_Zones = cell(4,1);
+    case 'KidneyVU'
+        ZoneNames = cell(5,1);
+        ZoneNames{1} = 'KidneyZ1-21Oct';
+        ZoneNames{2} = 'KidneyZ2-21Oct';
+        ZoneNames{3} = 'KidneyZ3-21Oct';
+        ZoneNames{4} = 'KidneyZ4-21Oct';
+        ZoneNames{5} = 'KidneyZ5-21Oct';
+        ZoneColors = {'g','m','c','b','r'};
+%         ZoneColors = {'g','m','c'};
+        pointCloud_All_Zones = cell(5,1);
 end
 N_zones = length(ZoneNames);
 for i = 1:N_zones

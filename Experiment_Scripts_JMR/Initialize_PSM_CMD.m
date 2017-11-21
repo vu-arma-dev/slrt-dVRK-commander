@@ -59,5 +59,5 @@ if strcmp(GoHome,'on')
     fprintf('[ok]\n');
 end
 %%  Unbias the F/T sensor
-Unbias_FT_sensor(PSM_CMD);
+Unbias_PSMCMD_FT(PSM_CMD);
 end

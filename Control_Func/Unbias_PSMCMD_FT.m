@@ -1,4 +1,4 @@
-function Unbias_FT_sensor(tg)
+function Unbias_PSMCMD_FT(tg)
 %%  Unbias the F/T sensor
 %   By Long Wang, 2016/9/26
 %   This func sets the unbiasing trigger for F/T sensor and then wait for
@@ -21,8 +21,6 @@ while(toc(t0)<6.5)
     reverseStr = repmat(sprintf('\b'), 1, length(msg));
 end
 fprintf(' [ok].\n')
-id_status=tg.getparamid('UDP Send/status','Value');
-tg.setparam(id_status,1);
 
 end
 
