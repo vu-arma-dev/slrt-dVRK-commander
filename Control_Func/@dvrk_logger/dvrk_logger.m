@@ -52,12 +52,15 @@ classdef dvrk_logger < handle
         function continue_log(self)
             if isempty(self.logs)
                 self.logs = self.make_new_log();
+                self.logs.time = [self.current_log.time];
+            else
+                self.logs(end+1).time = [self.current_log.time];
             end
-            self.logs(end).time = [self.logs(end).time, self.current_log.time];
-            self.logs(end).force = [self.logs(end).force, self.current_log.force];
-            self.logs(end).position = [self.logs(end).position, self.current_log.position];
-            self.logs(end).quat = [self.logs(end).quat, self.current_log.quat];
+            self.logs(end).force = [self.current_log.force];
+            self.logs(end).position = [self.current_log.position];
+            self.logs(end).quat = [self.current_log.quat];
             self.current_log_idx = 1;
+            self.current_log=self.make_new_log;
         end
         %%  Following functions are added by Long, used only for JMR experiments
         compute_contact(self,varargin);

@@ -57,7 +57,9 @@ pause;
 %%  Robot moving to touch the surface
 Hybrid_adm_config(PSM_CMD,'K_adm',eye(3)*25);
 Hybrid_adm_config(PSM_CMD,'f_bias',0.2);
-Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]);
+% Hybrid_adm_config(PSM_CMD,'n',[0.3271;-0.2056;0.9230]); % used for the
+% deformed model
+Hybrid_adm_config(PSM_CMD,'n',[0;0;1]);
 fprintf('Robot is reaching to contact surface ...\n');
 t0 = tic;
 reverseStr = [];
